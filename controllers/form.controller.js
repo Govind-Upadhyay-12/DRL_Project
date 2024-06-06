@@ -1,46 +1,57 @@
 const FormData =require("../models/Form_Schema")
-module.exports.createForm = async (req, res) => {
-    console.log(req.body)
-    try {
-        const {
-            instruction,
-            min_occurence,
-            max_occurence,
-            start_time,
-            end_time,
-            signature,
-            frame_shell_no,
-            remark,
-            intervention_type
-        } = req.body;
-        if (!instruction || !min_occurence || !max_occurence  || !start_time || !end_time || !signature || !frame_shell_no  || !intervention_type) {
-            return res.status(400).json({ error: 'All required fields must be provided' });
-        }
-        const newForm = new FormData({
-            instruction,
-            min_occurence,
-            max_occurence,
-            start_time,
-            end_time,
-            signature,
-            frame_shell_no,
-            remark,
-            intervention_type
-        });
-        const savedForm = await newForm.save();
-        console.log(savedForm);
 
-        return res.status(200).json({
-            statusCode: 200,
-            message: "form submitted successfully"
-          });
+
+module.exports.createForm = async (req, res) => {
+    try {
+       console.log(req.body)
+        const {
+            identifier,
+            instruction,
+            min_occurences,
+            max_occurences,
+            performed_occurences,
+            start_time,
+            end_time,
+            signature,
+            frame_shell_no,
+            remark,
+            intervention_type,
+            glove_id,
+            performed_by
+        } = req.body;
+        if (!instruction || !min_occurences || !max_occurences|| !start_time || !end_time || !signature || !frame_shell_no  || !intervention_type || ! performed_occurences|| ! glove_id || !performed_by || !identifier) {
+            return res.status(400).json({ error: 'All required fields must be provided' }); 
+        }
+
+        const newForm = new FormData({
+            identifier,
+            instruction,
+            min_occurences,
+            max_occurences,
+            performed_occurences,
+            start_time,
+            end_time,
+            signature,
+            frame_shell_no,
+            remark,
+            intervention_type,
+            glove_id,
+            performed_by
+        });
+
+        const savedForm = await newForm.save();
+
+        res.status(201).json({
+            statusCode: 201,
+            message: 'Form created successfully',
+            data: savedForm
+        });
     } catch (error) {
         console.error('Error creating form:', error);
-        res.status(500).json({ 
-            statusCode:500,
-            error: 'Internal server error',
-            message:error
-         });
+       return res.status(500).json({
+            statusCode: 500,
+            message: 'Internal server error'
+        });
     }
 };
 
